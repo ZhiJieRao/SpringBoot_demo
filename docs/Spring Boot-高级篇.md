@@ -1106,12 +1106,14 @@ public class AmqpConfig {
 
   ​	可用于创建和删除exchange、binding和queue
 
+```java
 //创建Direct类型的Exchange
 amqpAdmin.declareExchange(new DirectExchange("admin.direct"));
 //创建Queue
 amqpAdmin.declareQueue(new Queue("admin.test"));
 //将创建的队列与Exchange绑定
 amqpAdmin.declareBinding(new Binding("admin.test", Binding.DestinationType.QUEUE,"admin.direct","admin.test",null));
+```
 
 **消息的监听**
 
