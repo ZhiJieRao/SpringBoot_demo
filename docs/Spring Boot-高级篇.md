@@ -1106,21 +1106,17 @@ public class AmqpConfig {
 
   ​	可用于创建和删除exchange、binding和queue
 
-```java
 //创建Direct类型的Exchange
 amqpAdmin.declareExchange(new DirectExchange("admin.direct"));
 //创建Queue
 amqpAdmin.declareQueue(new Queue("admin.test"));
 //将创建的队列与Exchange绑定
 amqpAdmin.declareBinding(new Binding("admin.test", Binding.DestinationType.QUEUE,"admin.direct","admin.test",null));
-```
 
 **消息的监听**
 
 * 在回调方法上标注@RabbitListener注解，并设置其属性queues，注册监听队列，当该队列收到消息时，标注方法遍会调用
-
 * 可分别使用Message和保存消息所属对象进行消息接收，若使用Object对象进行消息接收，实际上接收到的也是Message
-
 * 如果知道接收的消息是何种类型的对象，可在方法参数中直接加上该类型参数，也可接收到
 
 ```java
@@ -1153,6 +1149,7 @@ public class BookService {
 ```
 
 * 若消息中含有不同的对象，可以使用`@RabbitHandler`进行分别接收
+* @RabbitListener标注在类、方法上，可以独立使用（标注在方法上时）。@RabbitHandler仅标注在方法上，不能独立生效，必须配合类上的 `@RabbitListener`
 
 ```java
 @RabbitListener(queues = {"admin.test"})
@@ -1174,15 +1171,13 @@ public class BookService {
 
 为保证消息不丢失，可靠抵达，可以使用事务消息，但性能下降250倍，为此引入确认机制
 
-* **publisher** confirmCallback 确认模式
+* **publisher** confirmCallback 确认模式 （在 RabbitMQ 服务器完成「消息是否成功投递到交换机（Exchange）」的判断后，异步触发）
 * **publisher** returnCallback 未投递到queue 退回模式(失败时触发回调)
 * **consumer** ack(Acknowledgement)机制
 
 <img src="https://i.loli.net/2020/10/03/VIEF9woJaGchQpW.png" style="zoom:38%;" />
 
 #### (1) confirmCallback
-
-<img src="https://i.loli.net/2020/10/03/mkn8LVQUiTxphsq.png" style="zoom: 50%;" />
 
 ` CorrelationData`为消息的唯一标识，在发送消息时进行构建
 
